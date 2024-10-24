@@ -10,7 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "telegraf": "^1.0.0",
+    "telegraf": "^4.16.3"
   },
   "devDependencies": {
     "@elbrus/eslint-config": "^1.0.0",
