@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "description": "",
+  "dependencies": {
+    "telegraf": "^1.0.0",
+  },
   "devDependencies": {
     "@elbrus/eslint-config": "^1.0.0",
     "@eslint/js": "^9.13.0",
