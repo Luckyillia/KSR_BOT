@@ -442,24 +442,32 @@ bot.on('text', async (ctx) => {
     if (state === 'adding_car') {
         const data = ctx.message.text.split('|').map(part => part.trim());
         if (data.length === 5) {
-            const newCar = {
-                name: data[0],
-                stage: data[1],
-                price_day: data[2].split('/')[0].trim(),
-                price_week: data[2].split('/')[1].trim(),
-                price_month: data[2].split('/')[2].trim(),
-                zalog: data[3],
-                img: [data[4]]
-            };
-            json.push(newCar);
-            fs.writeFileSync('./data.json', JSON.stringify(json, null, 2));
-            await ctx.reply("Автомобиль успешно добавлен!");
+            // Perform input validation
+            const [name, stage, prices, zalog, img] = data;
+            const priceParts = prices.split('/').map(price => parseFloat(price.trim()));
+            if (priceParts.length === 3 && priceParts.every(price => !isNaN(price))) {
+                const newCar = {
+                    name,
+                    stage,
+                    price_day: priceParts[0],
+                    price_week: priceParts[1],
+                    price_month: priceParts[2],
+                    zalog,
+                    img: [img]
+                };
+                json.push(newCar);
+                await fs.promises.writeFile('./data.json', JSON.stringify(json, null, 2));
+                await ctx.reply("Автомобиль успешно добавлен!");
+            } else {
+                await ctx.reply("Неверный формат цены. Убедитесь, что вы ввели три значения для цены.");
+            }
         } else {
-            await ctx.reply("Неверный формат данных.");
+            await ctx.reply("Неверный формат данных. Пожалуйста, используйте правильный формат.");
         }
         delete userStates[userId]; // Clear state after processing
     }
 });
+
 
 // Обработчик для удаления автомобиля
 bot.action('delete_car', async (ctx) => {
