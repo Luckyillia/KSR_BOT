@@ -435,41 +435,6 @@ bot.action('add_car', async (ctx) => {
     await ctx.reply("Пожалуйста, отправьте данные авто в формате:\n\nНазвание | Стейджи | Цена (день/неделя/месяц) | Залог | Изображение");
 });
 
-bot.on('text', async (ctx) => {
-    const userId = ctx.from.id;
-    const state = userStates[userId];
-
-    if (state === 'adding_car') {
-        const data = ctx.message.text.split('|').map(part => part.trim());
-        if (data.length === 5) {
-            // Perform input validation
-            const [name, stage, prices, zalog, img] = data;
-            const priceParts = prices.split('/').map(price => parseFloat(price.trim()));
-            if (priceParts.length === 3 && priceParts.every(price => !isNaN(price))) {
-                const newCar = {
-                    name,
-                    stage,
-                    price_day: priceParts[0],
-                    price_week: priceParts[1],
-                    price_month: priceParts[2],
-                    zalog,
-                    img: [img]
-                };
-                json.push(newCar);
-                await fs.promises.writeFile('./data.json', JSON.stringify(json, null, 2));
-                await ctx.reply("Автомобиль успешно добавлен!");
-            } else {
-                await ctx.reply("Неверный формат цены. Убедитесь, что вы ввели три значения для цены.");
-            }
-        } else {
-            await ctx.reply("Неверный формат данных. Пожалуйста, используйте правильный формат.");
-        }
-        delete userStates[userId]; // Clear state after processing
-    }
-});
-
-
-// Обработчик для удаления автомобиля
 bot.action('delete_car', async (ctx) => {
     await ctx.answerCbQuery();
     await ctx.reply("Введите название автомобиля, который хотите удалить:");
@@ -554,66 +519,102 @@ bot.action('back_to_admin', async (ctx) => {
 
 
 bot.on('text', async (ctx) => {
-    if (ctx.message.text === '🏠 Вернуться в главное меню') {
-        stateFiltr = false;
+    const userId = ctx.from.id;
+    const state = userStates[userId];
 
-        return ctx.reply('Вы вернулись в главное меню', Markup.keyboard([
-            ['🚗 Все Авто', '🔍 Фильтр Авто']
-        ]).resize());
-    }
-
-    if (stateFiltr) {
-        const filterInput = ctx.message.text.trim();
-        let nameFilter = '';
-        let priceRange = '';
-        let rentPeriod = 'день';
-
-        if (filterInput.includes(',')) {
-            const parts = filterInput.split(',').map(item => item.trim().toLowerCase());
-            nameFilter = parts[0];
-            priceRange = parts[1];
-        } else if (filterInput.includes('/')) {
-            priceRange = filterInput.toLowerCase();
-        } else {
-            nameFilter = filterInput.toLowerCase();
-        }
-
-        if (priceRange.includes('/')) {
-            const [price, period] = priceRange.split('/');
-            rentPeriod = period.trim();
-
-            let priceFrom = 0;
-            let priceTo = Infinity;
-
-            const [from, to] = price.split('-').map(price => parseInt(price.trim(), 10));
-            priceFrom = isNaN(from) ? 0 : from;
-            priceTo = isNaN(to) ? Infinity : to;
-
-            filteredCars = json.filter(car => {
-                const nameMatches = nameFilter ? car.name.toLowerCase().includes(nameFilter) : true;
-                return nameMatches && filterByPrice(car, priceFrom, priceTo, rentPeriod);
-            });
-
-            if (filteredCars.length > 0) {
-                userCarIndex[ctx.from.id] = 0;
-                await sendCarData(ctx, userCarIndex[ctx.from.id]);
+    if (state === 'adding_car') {
+        const data = ctx.message.text.split('|').map(part => part.trim());
+        if (data.length === 5) {
+            const [name, stage, prices, zalog, img] = data;
+            const priceParts = prices.split('/');
+            if (priceParts.length === 3 && priceParts.every(price => !isNaN(price))) {
+                const newCar = {
+                    name,
+                    stage,
+                    price_day: priceParts[0],
+                    price_week: priceParts[1],
+                    price_month: priceParts[2],
+                    zalog,
+                    img: [img]
+                };
+                json.push(newCar);
+                await fs.promises.writeFile('./data.json', JSON.stringify(json, null, 2));
+                await ctx.reply(
+                    "Автомобиль успешно добавлен!",
+                    Markup.inlineKeyboard([
+                      Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')
+                    ])
+                  );
+                  
+                delete userStates[userId];
             } else {
-                ctx.reply('Не удалось найти автомобили по вашему запросу.');
+                await ctx.reply("Неверный формат цены. Убедитесь, что вы ввели три значения для цены.");
             }
         } else {
-            filteredCars = json.filter(car => car.name.toLowerCase().includes(nameFilter));
-
-            if (filteredCars.length > 0) {
-                userCarIndex[ctx.from.id] = 0;
-                await sendCarData(ctx, userCarIndex[ctx.from.id]);
-            } else {
-                ctx.reply('Не удалось найти автомобили по вашему запросу.');
-            }
+            await ctx.reply("Неверный формат данных. Пожалуйста, используйте правильный формат.");
         }
     } else {
-        ctx.reply('На такую команду я не запрограммирован..', Markup.keyboard([
-            ['🚗 Все Авто', '🔍 Фильтр Авто']
-        ]).resize());
+        if (ctx.message.text === '🏠 Вернуться в главное меню') {
+            stateFiltr = false;
+
+            return ctx.reply('Вы вернулись в главное меню', Markup.keyboard([
+                ['🚗 Все Авто', '🔍 Фильтр Авто']
+            ]).resize());
+        }
+
+        if (stateFiltr) {
+            const filterInput = ctx.message.text.trim();
+            let nameFilter = '';
+            let priceRange = '';
+            let rentPeriod = 'день';
+
+            if (filterInput.includes(',')) {
+                const parts = filterInput.split(',').map(item => item.trim().toLowerCase());
+                nameFilter = parts[0];
+                priceRange = parts[1];
+            } else if (filterInput.includes('/')) {
+                priceRange = filterInput.toLowerCase();
+            } else {
+                nameFilter = filterInput.toLowerCase();
+            }
+
+            if (priceRange.includes('/')) {
+                const [price, period] = priceRange.split('/');
+                rentPeriod = period.trim();
+
+                let priceFrom = 0;
+                let priceTo = Infinity;
+
+                const [from, to] = price.split('-').map(price => parseInt(price.trim(), 10));
+                priceFrom = isNaN(from) ? 0 : from;
+                priceTo = isNaN(to) ? Infinity : to;
+
+                filteredCars = json.filter(car => {
+                    const nameMatches = nameFilter ? car.name.toLowerCase().includes(nameFilter) : true;
+                    return nameMatches && filterByPrice(car, priceFrom, priceTo, rentPeriod);
+                });
+
+                if (filteredCars.length > 0) {
+                    userCarIndex[ctx.from.id] = 0;
+                    await sendCarData(ctx, userCarIndex[ctx.from.id]);
+                } else {
+                    ctx.reply('Не удалось найти автомобили по вашему запросу.');
+                }
+            } else {
+                filteredCars = json.filter(car => car.name.toLowerCase().includes(nameFilter));
+
+                if (filteredCars.length > 0) {
+                    userCarIndex[ctx.from.id] = 0;
+                    await sendCarData(ctx, userCarIndex[ctx.from.id]);
+                } else {
+                    ctx.reply('Не удалось найти автомобили по вашему запросу.');
+                }
+            }
+        } else {
+            ctx.reply('На такую команду я не запрограммирован..', Markup.keyboard([
+                ['🚗 Все Авто', '🔍 Фильтр Авто']
+            ]).resize());
+        }
     }
 });
 

@@ -64,5 +64,27 @@
     "img": [
       "Toyota_Chaser_Stas.png"
     ]
+  },
+  {
+    "name": "Nissan GT-R (r35)(винил)",
+    "stage": "База Скорость Скорость",
+    "price_day": "35.000",
+    "price_week": "220.000",
+    "price_month": "700.000",
+    "zalog": "35.000",
+    "img": [
+      "Ferrari_348GTB_Stas.png"
+    ]
+  },
+  {
+    "name": "Nissan GT-R (r35)(винил)",
+    "stage": "База Скорость Скорость",
+    "price_day": "35.000",
+    "price_week": "220.000",
+    "price_month": "700.000",
+    "zalog": "35.000",
+    "img": [
+      "Ferrari_348GTB_Stas.png"
+    ]
   }
 ]
