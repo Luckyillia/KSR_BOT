@@ -3,15 +3,16 @@ const path = require('path');
 const json = require('./data.json');
 const fs = require('fs');
 
-
-let bookings = [];
 let stateFiltr = false;
 const adminChatId = process.env.ADMIN_ID;
 const admin_assistantChatId = process.env.ADMIN_ASSISTANT;
-const adminIds = [adminChatId, admin_assistantChatId];
-const userCarIndex = {};
+
+let bookings = [];
 let filteredCars = [];
- 
+const adminIds = [adminChatId, admin_assistantChatId];
+
+const userCarIndex = {};
+const userStates = {};
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
@@ -428,11 +429,17 @@ bot.action('manage_cars', async (ctx) => {
     });
 });
 
-// Обработчик для добавления автомобиля
 bot.action('add_car', async (ctx) => {
     await ctx.answerCbQuery();
+    userStates[ctx.from.id] = 'adding_car'; 
     await ctx.reply("Пожалуйста, отправьте данные авто в формате:\n\nНазвание | Стейджи | Цена (день/неделя/месяц) | Залог | Изображение");
-    bot.on('text', async (ctx) => {
+});
+
+bot.on('text', async (ctx) => {
+    const userId = ctx.from.id;
+    const state = userStates[userId];
+
+    if (state === 'adding_car') {
         const data = ctx.message.text.split('|').map(part => part.trim());
         if (data.length === 5) {
             const newCar = {
@@ -450,7 +457,8 @@ bot.action('add_car', async (ctx) => {
         } else {
             await ctx.reply("Неверный формат данных.");
         }
-    });
+        delete userStates[userId]; // Clear state after processing
+    }
 });
 
 // Обработчик для удаления автомобиля

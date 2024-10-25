@@ -1,16 +1,5 @@
 [
   {
-    "name": "Toyota Chaser",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "15.000",
-    "price_week": "80.000",
-    "price_month": "250.000",
-    "zalog": "10.000",
-    "img": [
-      "Toyota_Chaser_Stas.png"
-    ]
-  },
-  {
     "name": "Toyota Mark 2",
     "stage": "База Скорость Скорость Скорость",
     "price_day": "18.000",
@@ -44,6 +33,17 @@
     ]
   },
   {
+    "name": "BMW M6 (f13)",
+    "stage": "База Скорость",
+    "price_day": "25.000",
+    "price_week": "150.000",
+    "price_month": "500.000",
+    "zalog": "25.000",
+    "img": [
+      "BMW_M6_Vanya.png"
+    ]
+  },
+  {
     "name": "Nissan Skyline r34",
     "stage": "База Скорость Скорость ",
     "price_day": "18.000",
@@ -55,14 +55,14 @@
     ]
   },
   {
-    "name": "BMW M6 (f13)",
-    "stage": "База Скорость",
-    "price_day": "25.000",
-    "price_week": "150.000",
-    "price_month": "500.000",
-    "zalog": "25.000",
+    "name": "Toyota Chaser",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "15.000",
+    "price_week": "80.000",
+    "price_month": "250.000",
+    "zalog": "10.000",
     "img": [
-      "BMW_M6_Vanya.png"
+      "Toyota_Chaser_Stas.png"
     ]
   }
 ]
