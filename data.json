@@ -1,16 +1,5 @@
 [
   {
-    "name": "Toyota Mark 2",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "18.000",
-    "price_week": "120.000",
-    "price_month": "350.000",
-    "zalog": "15.000",
-    "img": [
-      "Toyota_Mark2_Stas.png"
-    ]
-  },
-  {
     "name": "Nissan 200sx",
     "stage": "База Скорость Скорость Скорость",
     "price_day": "12.000",
@@ -19,17 +8,6 @@
     "zalog": "15.000",
     "img": [
       "Nissan_200sx_Stas.png"
-    ]
-  },
-  {
-    "name": "Nissan Skyline r32",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "16.000",
-    "price_week": "100.000",
-    "price_month": "320.000",
-    "zalog": "15.000",
-    "img": [
-      "Nissan_r32_Stas.png"
     ]
   },
   {
@@ -66,14 +44,25 @@
     ]
   },
   {
-    "name": "Nissan GT-R (r35)(винил)",
-    "stage": "База Скорость Скорость",
-    "price_day": "35.000",
-    "price_week": "220.000",
-    "price_month": "700.000",
-    "zalog": "35.000",
+    "name": "Nissan Skyline r32",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "16.000",
+    "price_week": "100.000",
+    "price_month": "320.000",
+    "zalog": "15.000",
     "img": [
-      "Ferrari_348GTB_Stas.png"
+      "Nissan_r32_Stas.png"
+    ]
+  },
+  {
+    "name": "Toyota Mark 2",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "18.000",
+    "price_week": "120.000",
+    "price_month": "350.000",
+    "zalog": "15.000",
+    "img": [
+      "Toyota_Mark2_Stas.png"
     ]
   }
 ]

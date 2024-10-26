@@ -1,5 +1,4 @@
 const { Telegraf, Markup } = require('telegraf');
-const path = require('path');
 const json = require('./data.json');
 const fs = require('fs');
 
@@ -16,20 +15,14 @@ const userStates = {};
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
-function readBookingsFromFile() {
-    const filePath = path.join(__dirname, 'bookings.json');
-    fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err) {
-            console.error('Ошибка чтения файла:', err);
-            return;
-        }
-        try {
-            bookings = JSON.parse(data);
-        } catch (parseError) {
-            console.error('Ошибка парсинга JSON:', parseError);
-        }
-    });
-}
+const {
+    readBookingsFromFile,
+    sendCar,
+    editCar,
+    sendCarData,
+    filterByPrice,
+    editFilteredCar
+} = require('./carFunctions');
 
 readBookingsFromFile();
 
@@ -46,7 +39,6 @@ bot.start(async (ctx) => {
         ]).resize()
     );
 });
-
 
 bot.hears('🚗 Все Авто', async (ctx) => {
     const userId = ctx.from.id;
@@ -73,67 +65,6 @@ bot.action('prev_car', async (ctx) => {
     await ctx.answerCbQuery();
     await editCar(ctx, userCarIndex[userId]);
 });
-
-async function sendCar(ctx, index) {
-    const car = json[index];
-    const carData = 
-        `🚗 *Название*: ${car.name}\n` +
-        `🛠️ *Стейджи*: ${car.stage}\n` +
-        `💰 *Цена*: ${car.price_day} день / ${car.price_week} неделя / ${car.price_month} месяц\n` +
-        `🔑 *Залог*: ${car.zalog}\n`;
-
-    const imagePath = path.join(__dirname, 'img', car.img[0]);
-
-    try {
-        await ctx.replyWithPhoto(
-            { source: imagePath },
-            {
-                caption: carData,
-                parse_mode: 'Markdown',
-                ...Markup.inlineKeyboard([
-                    [Markup.button.callback('⬅️ Предыдущая', 'prev_car'), 
-                     Markup.button.callback('Забронировать', 'book_car'), 
-                     Markup.button.callback('Следующая ➡️', 'next_car')],
-                    [Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')]
-                ])
-            }
-        );
-    } catch (error) {
-        console.error("Error sending image or message:", error);
-        ctx.reply(`Не удалось загрузить изображение для ${car.name}.`);
-    }
-}
-
-async function editCar(ctx, index) {
-    const car = json[index];
-    const carData = 
-        `🚗 *Название*: ${car.name}\n` +
-        `🛠️ *Стейджи*: ${car.stage}\n` +
-        `💰 *Цена*: ${car.price_day} день / ${car.price_week} неделя / ${car.price_month} месяц\n` +
-        `🔑 *Залог*: ${car.zalog}\n`;
-
-    const imagePath = path.join(__dirname, 'img', car.img[0]);
-
-    try {
-        await ctx.editMessageMedia(
-            {
-                type: 'photo',
-                media: { source: imagePath },
-                caption: carData,
-                parse_mode: 'Markdown'
-            },
-            Markup.inlineKeyboard([
-                [Markup.button.callback('⬅️ Предыдущая', 'prev_car'), 
-                 Markup.button.callback('Забронировать', 'book_car'), 
-                 Markup.button.callback('Следующая ➡️', 'next_car')],
-                [Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')]
-            ])
-        );
-    } catch (error) {
-        console.error("Error editing image or caption:", error);
-        ctx.reply(`Не удалось загрузить изображение для ${car.name}.`);
-    }
-}
 
 bot.action('book_car', async (ctx) => {
     await ctx.answerCbQuery('Вы забронировали авто, с вами свяжутся');
@@ -177,7 +108,6 @@ bot.action('book_car', async (ctx) => {
     });
 });
 
-
 bot.hears('🔍 Фильтр Авто', async (ctx) => {
     await ctx.reply("🔍 **Фильтр авто**", Markup.removeKeyboard());
     const filtr =  "📋 **Примеры**\n\n" +
@@ -192,62 +122,6 @@ bot.hears('🔍 Фильтр Авто', async (ctx) => {
     stateFiltr = true;
 });
 
-async function sendCarData(ctx, index) {
-    if (filteredCars.length === 0) {
-        ctx.reply("Не удалось найти автомобили по вашему запросу.");
-        return;
-    }
-
-    const car = filteredCars[index];
-    const carData = 
-        `🚗 **Название**: ${car.name}\n` +
-        `🛠️ **Стейджи**: ${car.stage}\n` +
-        `💰 **Цена**: ${car.price_day} день / ${car.price_week} неделя / ${car.price_month} месяц\n` +
-        `🔑 **Залог**: ${car.zalog}\n`;
-
-    const imagePath = path.join(__dirname, 'img', car.img[0]);
-
-    try {
-        await ctx.replyWithPhoto(
-            { source: imagePath },
-            {
-                caption: carData,
-                parse_mode: 'Markdown',
-                ...Markup.inlineKeyboard([
-                    [Markup.button.callback('⬅️ Предыдущая', 'prev_filtered_car'), 
-                    Markup.button.callback('Забронировать', 'book_car'),
-                    Markup.button.callback('Следующая ➡️', 'next_filtered_car')],
-                    [Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')]
-                ])
-            }
-        );
-    } catch (error) {
-        console.error("Error sending image or message:", error);
-        ctx.reply(`Не удалось загрузить изображение для ${car.name}.`);
-    }
-    stateFiltr = false;
-}
-
-function filterByPrice(car, priceFrom, priceTo, rentPeriod) {
-    let carPrice = 0;
-
-    switch (rentPeriod) {
-        case 'день':
-            carPrice = parseInt(car.price_day);
-            break;
-        case 'неделя':
-            carPrice = parseInt(car.price_week);
-            break;
-        case 'месяц':
-            carPrice = parseInt(car.price_month);
-            break;
-        default:
-            return false;
-    }
-
-    return carPrice >= priceFrom && carPrice <= priceTo;
-}
-
 bot.action('next_filtered_car', async (ctx) => {
     const userId = ctx.from.id;
 
@@ -258,7 +132,7 @@ bot.action('next_filtered_car', async (ctx) => {
 
     userCarIndex[userId] = (userCarIndex[userId] + 1) % filteredCars.length;
     await ctx.answerCbQuery();
-    await editFilteredCar(ctx, userCarIndex[userId]);
+    await editFilteredCar(ctx, userCarIndex[userId], filteredCars);
 });
 
 bot.action('prev_filtered_car', async (ctx) => {
@@ -271,39 +145,8 @@ bot.action('prev_filtered_car', async (ctx) => {
 
     userCarIndex[userId] = (userCarIndex[userId] - 1 + filteredCars.length) % filteredCars.length;
     await ctx.answerCbQuery();
-    await editFilteredCar(ctx, userCarIndex[userId]);
+    await editFilteredCar(ctx, userCarIndex[userId], filteredCars);
 });
-
-async function editFilteredCar(ctx, index) {
-    const car = filteredCars[index];
-    const carData = 
-        `🚗 *Название*: ${car.name}\n` +
-        `🛠️ *Стейджи*: ${car.stage}\n` +
-        `💰 *Цена*: ${car.price_day} день / ${car.price_week} неделя / ${car.price_month} месяц\n` +
-        `🔑 *Залог*: ${car.zalog}\n`;
-
-    const imagePath = path.join(__dirname, 'img', car.img[0]);
-
-    try {
-        await ctx.editMessageMedia(
-            {
-                type: 'photo',
-                media: { source: imagePath },
-                caption: carData,
-                parse_mode: 'Markdown'
-            },
-            Markup.inlineKeyboard([
-                [Markup.button.callback('⬅️ Предыдущая', 'prev_filtered_car'), 
-                Markup.button.callback('Забронировать', 'book_car'),
-                Markup.button.callback('Следующая ➡️', 'next_filtered_car')],
-                [Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')]
-            ])
-        );
-    } catch (error) {
-        console.error("Error editing image or caption:", error);
-        ctx.reply(`Не удалось загрузить изображение для ${car.name}.`);
-    }
-}
 
 bot.action('go_to_main', (ctx) => {
     ctx.reply('Вы вернулись в главное меню', Markup.keyboard([
@@ -311,10 +154,8 @@ bot.action('go_to_main', (ctx) => {
     ]).resize());
 });
 
-
-// Команда /admin для открытия админ-панели
 bot.command('admin', async (ctx) => {
-    if(adminChatId != ctx.from.id){
+    if(adminIds.includes(ctx.from.id)) {
         return ctx.reply("Извините, доступ к админ-панели запрещен.");
     }
     await ctx.reply("Добро пожаловать в админ-панель!",Markup.removeKeyboard());
@@ -330,7 +171,6 @@ bot.command('admin', async (ctx) => {
     });
 });
 
-// Обработчик для просмотра забронированных авто
 bot.action('view_bookings', async (ctx) => {
     await ctx.answerCbQuery();
     
@@ -351,12 +191,11 @@ bot.action('view_bookings', async (ctx) => {
                 { text: "Удалить", callback_data: `delete_booking_${index}` }
             ];
         });
-
         await ctx.reply("Список всех бронирований:", {
             parse_mode: 'Markdown',
             reply_markup: {
                 inline_keyboard: [
-                    ...bookingInfo, // добавляем информацию о бронированиях
+                    ...bookingInfo,
                     [{ text: "Назад в админ-панель", callback_data: 'back_to_admin' }]
                 ]
             }
@@ -365,7 +204,7 @@ bot.action('view_bookings', async (ctx) => {
 });
 
 bot.action(/delete_booking_(\d+)/, async (ctx) => {
-    const index = parseInt(ctx.match[1]); // Получаем индекс из callback_data
+    const index = parseInt(ctx.match[1]);
     if (index >= 0 && index < bookings.length) {
         const removedBooking = bookings.splice(index, 1)[0]; 
 
@@ -377,8 +216,6 @@ bot.action(/delete_booking_(\d+)/, async (ctx) => {
     } else {
         await ctx.answerCbQuery("Ошибка: Бронирование не найдено.");
     }
-
-    // Обновляем список бронирований после удаления
     await ctx.editMessageReplyMarkup({
         inline_keyboard: [
             ...bookings.map((booking, index) => [
@@ -391,7 +228,7 @@ bot.action(/delete_booking_(\d+)/, async (ctx) => {
 });
 
 bot.action(/booking_info_(\d+)/, async (ctx) => {
-    const index = parseInt(ctx.match[1]); // Получаем индекс бронирования из callback_data
+    const index = parseInt(ctx.match[1]);
     if (index >= 0 && index < bookings.length) {
         const booking = bookings[index];
         const userLink = `[${booking.user.name}](tg://user?id=${booking.user.id})`;
@@ -413,7 +250,6 @@ bot.action(/booking_info_(\d+)/, async (ctx) => {
         await ctx.reply("Ошибка: Бронирование не найдено.");
     }
 });
-
 
 bot.action('manage_cars', async (ctx) => {
     await ctx.answerCbQuery();
@@ -451,7 +287,6 @@ bot.action('delete_car', async (ctx) => {
     });
 });
 
-// Обработчик для редактирования автомобиля
 bot.action('edit_car', async (ctx) => {
     await ctx.answerCbQuery();
     await ctx.reply("Введите название автомобиля, который хотите редактировать:");
@@ -482,7 +317,6 @@ bot.action('edit_car', async (ctx) => {
     });
 });
 
-// Обработчик для обновления фильтров
 bot.action('update_filters', async (ctx) => {
     await ctx.answerCbQuery();
     await ctx.reply("Введите новые значения фильтров в формате:\nМинимальная цена - Максимальная цена | Период (день/неделя/месяц)");
@@ -493,7 +327,6 @@ bot.action('update_filters', async (ctx) => {
         const rentPeriod = period ? period.trim().toLowerCase() : 'день';
 
         if (!isNaN(minPrice) && !isNaN(maxPrice) && rentPeriod) {
-            // Фильтры применяются к списку машин
             filteredCars = json.filter(car => filterByPrice(car, minPrice, maxPrice, rentPeriod));
             await ctx.reply("Фильтры успешно обновлены.");
         } else {
@@ -502,7 +335,6 @@ bot.action('update_filters', async (ctx) => {
     });
 });
 
-// Кнопка назад в админ-панель
 bot.action('back_to_admin', async (ctx) => {
     await ctx.answerCbQuery();
     await ctx.editMessageText("Добро пожаловать в админ-панель!", {
@@ -516,7 +348,6 @@ bot.action('back_to_admin', async (ctx) => {
         }
     });
 });
-
 
 bot.on('text', async (ctx) => {
     const userId = ctx.from.id;
@@ -596,7 +427,7 @@ bot.on('text', async (ctx) => {
 
                 if (filteredCars.length > 0) {
                     userCarIndex[ctx.from.id] = 0;
-                    await sendCarData(ctx, userCarIndex[ctx.from.id]);
+                    await sendCarData(ctx, userCarIndex[ctx.from.id],filteredCars);
                 } else {
                     ctx.reply('Не удалось найти автомобили по вашему запросу.');
                 }
@@ -605,7 +436,7 @@ bot.on('text', async (ctx) => {
 
                 if (filteredCars.length > 0) {
                     userCarIndex[ctx.from.id] = 0;
-                    await sendCarData(ctx, userCarIndex[ctx.from.id]);
+                    await sendCarData(ctx, userCarIndex[ctx.from.id],filteredCars);
                 } else {
                     ctx.reply('Не удалось найти автомобили по вашему запросу.');
                 }
