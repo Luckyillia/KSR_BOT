@@ -1,5 +1,49 @@
 [
   {
+    "name": "Toyota Chaser",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "15.000",
+    "price_week": "80.000",
+    "price_month": "250.000",
+    "zalog": "10.000",
+    "img": [
+      "Toyota_Chaser_Stas.png"
+    ]
+  },
+  {
+    "name": "Nissan Skyline r32",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "16.000",
+    "price_week": "100.000",
+    "price_month": "320.000",
+    "zalog": "15.000",
+    "img": [
+      "Nissan_r32_Stas.png"
+    ]
+  },
+  {
+    "name": "Mercedes 190e AMG",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "30.000",
+    "price_week": "100.000",
+    "price_month": "350.000",
+    "zalog": "20.000",
+    "img": [
+      "Mercedes_190e_AMG_Stas.png"
+    ]
+  },
+  {
+    "name": "Toyota Mark 2",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "18.000",
+    "price_week": "120.000",
+    "price_month": "350.000",
+    "zalog": "15.000",
+    "img": [
+      "Toyota_Mark2_Stas.png"
+    ]
+  },
+  {
     "name": "Nissan 200sx",
     "stage": "База Скорость Скорость Скорость",
     "price_day": "12.000",
@@ -33,36 +77,47 @@
     ]
   },
   {
-    "name": "Toyota Chaser",
+    "name": "NissanGTR r34",
     "stage": "База Скорость Скорость Скорость",
-    "price_day": "15.000",
-    "price_week": "80.000",
-    "price_month": "250.000",
-    "zalog": "10.000",
+    "price_day": "20.000",
+    "price_week": "85.000",
+    "price_month": "200.000",
+    "zalog": "20.000",
     "img": [
-      "Toyota_Chaser_Stas.png"
+      "Nissan_r34_Vanya.png"
     ]
   },
   {
-    "name": "Nissan Skyline r32",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "16.000",
+    "name": "Subaru Impreza WRX STI",
+    "stage": "База Скорость Баланс",
+    "price_day": "20.000",
     "price_week": "100.000",
-    "price_month": "320.000",
+    "price_month": "300.000",
     "zalog": "15.000",
     "img": [
-      "Nissan_r32_Stas.png"
+      "Subaru_impreza_Stas.png"
     ]
   },
   {
-    "name": "Toyota Mark 2",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "18.000",
-    "price_week": "120.000",
-    "price_month": "350.000",
-    "zalog": "15.000",
+    "name": "Ferrari 348 GTB",
+    "stage": "База Скорость Баланс Скорость",
+    "price_day": "45.000",
+    "price_week": "240.000",
+    "price_month": "750.000",
+    "zalog": "40.000",
     "img": [
-      "Toyota_Mark2_Stas.png"
+      "Ferrari_348GTB_Stas.png"
+    ]
+  },
+  {
+    "name": "Mazda RX-7",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "25.000",
+    "price_week": "120.000",
+    "price_month": "300.000",
+    "zalog": "25.000",
+    "img": [
+      "Mazda_RX-7_Stas.png"
     ]
   }
 ]
