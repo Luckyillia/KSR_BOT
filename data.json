@@ -1,16 +1,5 @@
 [
   {
-    "name": "Toyota Chaser",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "15.000",
-    "price_week": "80.000",
-    "price_month": "250.000",
-    "zalog": "10.000",
-    "img": [
-      "Toyota_Chaser_Stas.png"
-    ]
-  },
-  {
     "name": "Nissan Skyline r32",
     "stage": "База Скорость Скорость Скорость",
     "price_day": "16.000",
@@ -118,6 +107,17 @@
     "zalog": "25.000",
     "img": [
       "Mazda_RX-7_Stas.png"
+    ]
+  },
+  {
+    "name": "Toyota Chaser",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "15.000",
+    "price_week": "80.000",
+    "price_month": "250.000",
+    "zalog": "10.000",
+    "img": [
+      "Toyota_Chaser_Stas.png"
     ]
   }
 ]

@@ -7,7 +7,6 @@ const adminAction = require('./utils/adminAction');
 const userAction = require('./utils/userAction');
 //const readFile = require('./utils/readFile');
 
-let stateFiltr = false;
 const adminChatId = process.env.ADMIN_ID;
 const adminAssistantChatId = process.env.ADMIN_ASSISTANT;
 
@@ -18,7 +17,7 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 
 bot.start((ctx) => userAction.startHandler(ctx));
 bot.hears('🚗 Все Авто', (ctx) => userAction.allCarsHandler(ctx,userCarIndex));
-bot.hears('🔍 Фильтр Авто', (ctx) => userAction.filterCarsHandler(ctx, stateFiltr));
+bot.hears('🔍 Фильтр Авто', (ctx) => userAction.filterCarsHandler(ctx,userStates));
 bot.command('admin', (ctx) => userAction.adminHandler(ctx, adminChatId, adminAssistantChatId));
 
 bot.action('next_car', (ctx) => navigationButton.handleNextCar(ctx, json, userCarIndex));
@@ -44,7 +43,7 @@ bot.action(/booking_info_(\d+)/, (ctx) => {
   adminAction.handleBookingInfo(ctx, index);
 });
 
-bot.on('message', (ctx) => userModule.handleMessage(ctx, json, userStates,stateFiltr,userCarIndex, adminChatId, adminAssistantChatId));
+bot.on('message', (ctx) => userModule.handleMessage(ctx, json, userStates,userCarIndex, adminChatId, adminAssistantChatId));
 
 bot.launch();
 

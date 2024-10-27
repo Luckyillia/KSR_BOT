@@ -24,7 +24,7 @@ async function allCarsHandler(ctx,userCarIndex) {
   await sendCar(ctx, userCarIndex[userId]);
 }
 
-async function filterCarsHandler(ctx,stateFiltr) {
+async function filterCarsHandler(ctx, userStates) {
   await ctx.reply("🔍 **Фильтр авто**", Markup.removeKeyboard());
   const filtr =  "📋 **Примеры**\n\n" +
     "🔤 Только по названию пример: (BMW)\n\n" +
@@ -35,7 +35,7 @@ async function filterCarsHandler(ctx,stateFiltr) {
   ctx.reply(filtr, Markup.inlineKeyboard([
     Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')
   ]));
-  stateFiltr = true;
+  userStates[ctx.from.id] = 'filtr_car';
 }
 
 async function adminHandler(ctx,adminChatId,adminAssistantChatId) {

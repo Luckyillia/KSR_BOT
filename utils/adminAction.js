@@ -1,4 +1,3 @@
-const { Markup } = require('telegraf');
 const fs = require('fs');
 let json = require('../data.json');
 let bookings = require('../bookings.json');
@@ -48,22 +47,43 @@ async function handleManageCars(ctx) {
 async function handleAddCar(ctx, userStates) {
   await ctx.answerCbQuery();
   userStates[ctx.from.id] = 'adding_car';
-  await ctx.reply("📥 *Пожалуйста, отправьте данные авто в формате:*\n\nНазвание | Стейджи | Цена (день/неделя/месяц) | Залог | Изображение",
-    Markup.inlineKeyboard([
-      Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')
-    ]));
+  await ctx.editMessageText("📥 *Пожалуйста, отправьте данные авто в формате:*\n\nНазвание | Стейджи | Цена (день/неделя/месяц) | Залог | Изображение",
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад в управление автомобилями", callback_data: 'manage_cars' }]
+        ]
+      }
+    });
 }
 
 async function handleDeleteCar(ctx, userStates) {
   await ctx.answerCbQuery();
-  await ctx.reply("🗑️ Введите название автомобиля, который хотите удалить:");
+  await ctx.editMessageText("🗑️ Введите название автомобиля, который хотите удалить:",
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад в управление автомобилями", callback_data: 'manage_cars' }]
+        ]
+      }
+    });
   userStates[ctx.from.id] = 'delete_car';
 }
 
 async function handleFindCarToEdit(ctx, userStates) {
   await ctx.answerCbQuery();
   userStates[ctx.from.id] = { state: 'finding_car' };
-  await ctx.reply("✏️ *Введите название автомобиля, который хотите редактировать:*");
+  await ctx.editMessageText("✏️ *Введите название автомобиля, который хотите редактировать:*",
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад в управление автомобилями", callback_data: 'manage_cars' }]
+        ]
+      }
+    });
 }
 
 async function handleDeleteBooking(ctx, index) {

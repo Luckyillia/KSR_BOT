@@ -8,7 +8,7 @@ function getFilteredCars() {
   return filteredCars;
 }
 
-async function handleMessage(ctx, json, userStates, stateFiltr, userCarIndex, adminChatId, adminAssistantChatId) {
+async function handleMessage(ctx, json, userStates, userCarIndex, adminChatId, adminAssistantChatId) {
   if (ctx.message.photo || ctx.message.sticker || ctx.message.animation) {
     await ctx.reply("🚫 Извините, я вас не понимаю. Пожалуйста, отправьте текстовое сообщение.");
     try {
@@ -137,12 +137,7 @@ async function handleMessage(ctx, json, userStates, stateFiltr, userCarIndex, ad
       delete userStates[userId];
       break;
     }
-
-    default: {
-      if (ctx.message.text === '🏠 Вернуться в главное меню') {
-        stateFiltr = false;
-        await ctx.reply('Вы вернулись в главное меню', Markup.keyboard([['🚗 Все Авто', '🔍 Фильтр Авто']]).resize());
-      } else if (stateFiltr) {
+    case 'filtr_car':{
         const filterInput = ctx.message.text.trim();
         let [nameFilter = '', priceRange = ''] = filterInput.includes(',') ? filterInput.split(',').map(item => item.trim().toLowerCase()) : [filterInput.toLowerCase(), ''];
         let rentPeriod = priceRange.includes('/') ? priceRange.split('/')[1].trim() : 'день';
@@ -153,12 +148,14 @@ async function handleMessage(ctx, json, userStates, stateFiltr, userCarIndex, ad
         if (filteredCars.length > 0) {
           userCarIndex[ctx.from.id] = 0;
           await sendCarData(ctx, userCarIndex[ctx.from.id], filteredCars);
+          delete userStates[userId];
         } else {
           await ctx.reply('🚫 Не удалось найти автомобили по вашему запросу.', Markup.inlineKeyboard([Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')]));
         }
-      } else {
+      break;
+    }
+    default: {
         await ctx.reply('❓ На такую команду я не запрограммирован..', Markup.keyboard([['🚗 Все Авто', '🔍 Фильтр Авто']]).resize());
-      }
       break;
     }
   }
