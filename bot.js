@@ -44,7 +44,7 @@ bot.action(/booking_info_(\d+)/, (ctx) => {
   adminAction.handleBookingInfo(ctx, index);
 });
 
-bot.on('message', (ctx) => userModule.handleMessage(ctx, json, userStates,stateFiltr,userCarIndex));
+bot.on('message', (ctx) => userModule.handleMessage(ctx, json, userStates,stateFiltr,userCarIndex, adminChatId, adminAssistantChatId));
 
 bot.launch();
 

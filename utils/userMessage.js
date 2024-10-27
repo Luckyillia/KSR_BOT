@@ -1,16 +1,14 @@
-const { Markup, Telegraf } = require('telegraf');
+const { Markup } = require('telegraf');
 const fs = require('fs');
 const { sendCarData, filterByPrice } = require('./carFunctions.js');
 
 let filteredCars = [];
-const adminChatId = process.env.ADMIN_ID;
-const adminAssistantChatId = process.env.ADMIN_ASSISTANT;
 
 function getFilteredCars() {
   return filteredCars;
 }
 
-async function handleMessage(ctx, json, userStates, stateFiltr, userCarIndex) {
+async function handleMessage(ctx, json, userStates, stateFiltr, userCarIndex, adminChatId, adminAssistantChatId) {
   if (ctx.message.photo || ctx.message.sticker || ctx.message.animation) {
     await ctx.reply("🚫 Извините, я вас не понимаю. Пожалуйста, отправьте текстовое сообщение.");
     try {
