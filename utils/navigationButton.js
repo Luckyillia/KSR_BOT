@@ -63,7 +63,7 @@ async function handlePrevFilteredCar(ctx, userModule, userCarIndex) {
 
 async function handleGoToMain(ctx) {
   await ctx.reply('Вы вернулись в главное меню', Markup.keyboard([
-    ['🚗 Все Авто', '🔍 Фильтр Авто']
+    ['🚗 Все Авто','📄 Список всех авто', '🔍 Фильтр Авто']
   ]).resize());
   await ctx.deleteMessage();
 }
@@ -76,6 +76,7 @@ async function handleBackToAdmin(ctx) {
       inline_keyboard: [
         [{ text: "📅 Просмотр забронированных авто", callback_data: 'view_bookings' }],
         [{ text: "🚗 Управление автомобилями", callback_data: 'manage_cars' }],
+        [{ text: "📄 Список всех автомобилей", callback_data: 'list_car' }],
         [{ text: "⬅️ Выход из админ панели", callback_data: 'go_to_main' }]
       ]
     }

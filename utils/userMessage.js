@@ -155,7 +155,7 @@ async function handleMessage(ctx, json, userStates, userCarIndex, adminChatId, a
       break;
     }
     default: {
-        await ctx.reply('❓ На такую команду я не запрограммирован..', Markup.keyboard([['🚗 Все Авто', '🔍 Фильтр Авто']]).resize());
+        await ctx.reply('❓ На такую команду я не запрограммирован..', Markup.keyboard([['🚗 Все Авто','📄 Список всех авто', '🔍 Фильтр Авто']]).resize());
       break;
     }
   }

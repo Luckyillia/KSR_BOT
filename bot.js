@@ -5,19 +5,22 @@ const bookModule = require('./utils/bookModule');
 const navigationButton = require('./utils/navigationButton');
 const adminAction = require('./utils/adminAction');
 const userAction = require('./utils/userAction');
-//const readFile = require('./utils/readFile');
+const readFile = require('./utils/readFile');
 
 const adminChatId = process.env.ADMIN_ID;
 const adminAssistantChatId = process.env.ADMIN_ASSISTANT;
 
-const userCarIndex = {};
+let userCarIndex = {};
 const userStates = {};
 
 const bot = new Telegraf(process.env.BOT_TOKEN);
 
+userCarIndex = readFile.loadUserCarIndex(userCarIndex);
+
 bot.start((ctx) => userAction.startHandler(ctx));
 bot.hears('🚗 Все Авто', (ctx) => userAction.allCarsHandler(ctx,userCarIndex));
 bot.hears('🔍 Фильтр Авто', (ctx) => userAction.filterCarsHandler(ctx,userStates));
+bot.hears('📄 Список всех авто', (ctx) => userAction.listCar(ctx));
 bot.command('admin', (ctx) => userAction.adminHandler(ctx, adminChatId, adminAssistantChatId));
 
 bot.action('next_car', (ctx) => navigationButton.handleNextCar(ctx, json, userCarIndex));
@@ -30,6 +33,7 @@ bot.action('back_to_admin', (ctx) => navigationButton.handleBackToAdmin(ctx));
 bot.action('book_car', (ctx) => bookModule.handleBooking(ctx, adminChatId, adminAssistantChatId));
 
 bot.action('view_bookings', (ctx) => adminAction.viewBookings(ctx));
+bot.action('list_car', (ctx) => adminAction.listCarForAdmin(ctx));
 bot.action('manage_cars', (ctx) => adminAction.handleManageCars(ctx));
 bot.action('add_car', (ctx) => adminAction.handleAddCar(ctx, userStates));
 bot.action('delete_car', (ctx) => adminAction.handleDeleteCar(ctx, userStates));
@@ -47,5 +51,12 @@ bot.on('message', (ctx) => userModule.handleMessage(ctx, json, userStates,userCa
 
 bot.launch();
 
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => {
+  readFile.saveUserCarIndex(userCarIndex);
+  bot.stop('SIGINT');
+});
+
+process.once('SIGTERM', () => {
+  readFile.saveUserCarIndex(userCarIndex);
+  bot.stop('SIGTERM');
+});

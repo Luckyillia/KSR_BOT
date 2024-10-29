@@ -1,27 +1,5 @@
 [
   {
-    "name": "Nissan Skyline r32",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "16.000",
-    "price_week": "100.000",
-    "price_month": "320.000",
-    "zalog": "15.000",
-    "img": [
-      "Nissan_r32_Stas.png"
-    ]
-  },
-  {
-    "name": "Mercedes 190e AMG",
-    "stage": "База Скорость Скорость Скорость",
-    "price_day": "30.000",
-    "price_week": "100.000",
-    "price_month": "350.000",
-    "zalog": "20.000",
-    "img": [
-      "Mercedes_190e_AMG_Stas.png"
-    ]
-  },
-  {
     "name": "Toyota Mark 2",
     "stage": "База Скорость Скорость Скорость",
     "price_day": "18.000",
@@ -118,6 +96,39 @@
     "zalog": "10.000",
     "img": [
       "Toyota_Chaser_Stas.png"
+    ]
+  },
+  {
+    "name": "Nissan Skyline r32",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "16.000",
+    "price_week": "100.000",
+    "price_month": "320.000",
+    "zalog": "15.000",
+    "img": [
+      "Nissan_r32_Stas.png"
+    ]
+  },
+  {
+    "name": "Honda Civic Type R",
+    "stage": "База Скорость Скорость",
+    "price_day": "15.000",
+    "price_week": "70.000",
+    "price_month": "180.000",
+    "zalog": "15.000",
+    "img": [
+      "Honda_Civic_Stas.png"
+    ]
+  },
+  {
+    "name": "Mercedes 190e AMG",
+    "stage": "База Скорость Скорость Скорость",
+    "price_day": "30.000",
+    "price_week": "100.000",
+    "price_month": "350.000",
+    "zalog": "20.000",
+    "img": [
+      "Mercedes_190e_AMG_Stas.png"
     ]
   }
 ]

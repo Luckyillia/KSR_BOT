@@ -1,6 +1,7 @@
 const fs = require('fs');
 let json = require('../data.json');
 let bookings = require('../bookings.json');
+const { Markup } = require('telegraf');
 
 async function viewBookings(ctx) {
   if (bookings.length === 0) {
@@ -134,6 +135,22 @@ async function handleBookingInfo(ctx, index) {
   }
 }
 
+async function listCarForAdmin(ctx){
+  let list = '📄 **Список всех авто**\n\n';
+  json.map((car,idx) => {
+    list += `${idx+1} ${car.name}\n`;
+  })
+  ctx.editMessageText(list,
+    {
+      parse_mode: 'Markdown',
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад в админ-панель", callback_data: 'back_to_admin' }]
+        ]
+      }
+    });
+}
+
 module.exports = {
   handleManageCars,
   handleDeleteCar,
@@ -141,5 +158,6 @@ module.exports = {
   viewBookings,
   handleFindCarToEdit,
   handleBookingInfo,
-  handleDeleteBooking
+  handleDeleteBooking,
+  listCarForAdmin
 };

@@ -1,5 +1,7 @@
 const { Markup } = require('telegraf');
 const { sendCar } = require('./carFunctions');
+const json = require('../data.json');
+
 
 async function startHandler(ctx) {
   await ctx.reply(
@@ -10,7 +12,7 @@ async function startHandler(ctx) {
     '- Узнать детали о каждом автомобиле.\n\n' +
     'Что бы ты хотел сделать сегодня? Выбери опцию ниже:',
     Markup.keyboard([
-      ['🚗 Все Авто', '🔍 Фильтр Авто']
+      ['🚗 Все Авто','📄 Список всех авто', '🔍 Фильтр Авто']
     ]).resize()
   );
 }
@@ -41,7 +43,7 @@ async function filterCarsHandler(ctx, userStates) {
 async function adminHandler(ctx,adminChatId,adminAssistantChatId) {
   if (adminChatId != ctx.from.id && adminAssistantChatId != ctx.from.id) {
     return ctx.reply("🚫 *Извините, доступ к админ-панели запрещен.*\n\n🏠 Вы вернулись в главное меню", Markup.keyboard([
-      ['🚗 Все Авто', '🔍 Фильтр Авто']
+      ['🚗 Все Авто','📄 Список всех авто', '🔍 Фильтр Авто']
     ]).resize());
   }
   await ctx.reply("👮 Добро пожаловать в админ-панель!", Markup.removeKeyboard());
@@ -50,15 +52,28 @@ async function adminHandler(ctx,adminChatId,adminAssistantChatId) {
       inline_keyboard: [
         [{ text: "📅 Просмотр забронированных авто", callback_data: 'view_bookings' }],
         [{ text: "🚗 Управление автомобилями", callback_data: 'manage_cars' }],
+        [{ text: "📄 Список всех автомобилей", callback_data: 'list_car' }],
         [{ text: "⬅️ Выход из админ панели", callback_data: 'go_to_main' }]
       ]
     }
   });
 }
 
+async function listCar(ctx){
+  await ctx.reply("📄 **Список всех авто**", Markup.removeKeyboard());
+  let list = '';
+  json.map((car,idx) => {
+      list += `${idx+1} ${car.name}\n`;
+  })
+  ctx.reply(list, Markup.inlineKeyboard([
+    Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')
+  ]));
+}
+
 module.exports = {
   startHandler,
   allCarsHandler,
   filterCarsHandler,
-  adminHandler
+  adminHandler,
+  listCar
 };
