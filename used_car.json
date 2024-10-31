@@ -1,0 +1,25 @@
+[
+  {
+    "car": {
+      "name": "Ford Mustang Shelby GT-500",
+      "stage": "База Скорость",
+      "price_day": "30.000",
+      "price_week": "180.000",
+      "price_month": "500.000",
+      "zalog": "40.000",
+      "img": [
+        "Ford_Mustang_Shelby_Lexa.png"
+      ]
+    },
+    "user_used": {
+      "id": 677128727,
+      "name": "Lucky_illia"
+    },
+    "admin": {
+      "id": 677128727,
+      "name": "Lucky_illia"
+    },
+    "start_date": "31.10.2024, 01:22:36",
+    "end_date": "1.11.2024, 01:22:36"
+  }
+]

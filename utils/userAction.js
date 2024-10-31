@@ -1,6 +1,7 @@
 const { Markup } = require('telegraf');
+const fs = require('fs').promises;
 const { sendCar } = require('./carFunctions');
-const json = require('../data.json');
+let json = require('../data.json');
 
 
 async function startHandler(ctx) {
@@ -59,12 +60,22 @@ async function adminHandler(ctx,adminChatId,adminAssistantChatId) {
   });
 }
 
-async function listCar(ctx){
+async function updateCarsData() {
+  json = JSON.parse(await fs.readFile('./data.json', 'utf-8')); // Обновите данные из файла
+}
+
+// Ваша функция для отображения списка автомобилей
+async function listCar(ctx) {
   await ctx.reply("📄 **Список всех авто**", Markup.removeKeyboard());
+
+  // Обновите данные перед формированием списка
+  await updateCarsData(); // Обновите данные
+
   let list = '';
-  json.map((car,idx) => {
-      list += `${idx+1} ${car.name}\n`;
-  })
+  json.map((car, idx) => {
+    list += `${idx + 1} ${car.name}\n`;
+  });
+
   ctx.reply(list, Markup.inlineKeyboard([
     Markup.button.callback('🏠 Вернуться в главное меню', 'go_to_main')
   ]));

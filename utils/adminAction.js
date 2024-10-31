@@ -16,6 +16,7 @@ async function viewBookings(ctx) {
   } else {
     const bookingInfo = bookings.map((booking, index) => [
       { text: `#${index + 1} ${booking.car.name} 🗒️`, callback_data: `booking_info_${index}` },
+      { text: '➕ Добавить в использование', callback_data: `add_to_used_${index}` },
       { text: "🗑️ Удалить", callback_data: `delete_booking_${index}` }
     ]);
 

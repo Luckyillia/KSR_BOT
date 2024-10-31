@@ -6,10 +6,11 @@
     "start": "node bot.js"
   },
   "keywords": [],
-  "author": "",
+  "author": "Lucky_illia",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "node-cron": "^3.0.3",
     "punycode": "^2.3.1",
     "telegraf": "^4.16.3"
   },
